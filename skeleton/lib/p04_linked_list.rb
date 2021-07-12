@@ -1,5 +1,5 @@
 # require 'Enumerable'
-
+require 'byebug'
 class Node
   attr_reader :key
   attr_accessor :val, :next, :prev
@@ -16,6 +16,10 @@ class Node
   end
 
   def remove
+      self.prev.next = self.next
+      self.next.prev = self.prev
+      self.next = nil
+      self.prev = nil
       # optional but useful, connects previous link to next link
       # and removes self from list.
   end
@@ -31,7 +35,9 @@ class LinkedList
   end
 
   def [](i)
-    each_with_index { |link, j| return link if i == j }
+    each_with_index do |link, j| 
+      return link if i == j  
+    end
     nil
   end
 
@@ -46,29 +52,56 @@ class LinkedList
   def empty?
     @head.next == @tail
   end
-require 'byebug'
+
   def get(key)
-    debugger
-    self[key.to_s]
+      self.each do |node|
+        if node.key == key
+          return node.val
+        end
+      end  
   end
 
   def include?(key)
+      self.each do |node|
+        return true if node.key == key
+      end
+      false
+
   end
 
   def append(key, val)
-    x = Node.new(key,val)
-    x.next = @tail
-    x.prev = @head
-
+    newNode = Node.new(key,val)
+    prev = @tail.prev
+    # self.tail.prev.next = newNode
+    newNode.next = @tail
+    newNode.prev = prev
+    prev.next = newNode
+    @tail.prev = newNode
   end
 
   def update(key, val)
   end
 
   def remove(key)
+      self.each do |node|
+          if node.key == key 
+              debugger
+              nextNode = node.next
+              prevNode = node.prev
+              
+              prevNode.next = nextNode
+              nextNode.prev = prevNode
+          end
+      end
   end
 
-  def each
+  def each(&prc)
+      currNode = @head.next
+      while currNode.next != nil
+            prc.call(currNode)
+             
+            currNode = currNode.next
+      end
   end
 
   # uncomment when you have `each` working and `Enumerable` included
