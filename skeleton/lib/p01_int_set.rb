@@ -74,7 +74,7 @@ class ResizingIntSet
   end
 
   def insert(num)    
-    if count == num_buckets
+    if count == num_buckets 
       resize!
     end
     if !self.include?(num)
@@ -107,17 +107,14 @@ class ResizingIntSet
 
   def resize!
     # @store <<  Array.new(num_buckets)
-    if @count > num_buckets
       flat = @store.flatten
       # num_buckets *= 2
       double = num_buckets*2
       @store = Array.new(double) { Array.new }
-      # @count = 0
+      @count = 0
       flat.each do |ele|
         insert(ele)
       end
-    end
-  
-    return @store.length
+      # return @store.length
   end
 end
